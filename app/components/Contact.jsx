@@ -36,6 +36,7 @@ const Contact = () => {
       to_name: "Hicham",
       from_name: form.name,
       message: form.message,
+      from_email: form.email,
     };
     try {
       await emailjs.send(
