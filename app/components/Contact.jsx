@@ -1,45 +1,25 @@
-"use client"
-import React, { useRef, useState } from "react";
+"use client";
+import { ChakraProvider, useToast } from "@chakra-ui/react";
+import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
-import { styles } from "../styles";
-import { EarthCanvas } from "./canvas";
+import { useState } from "react";
 import { SectionWrapper } from "../hoc";
+import { styles } from "../styles";
 import { slideIn } from "../utils/motion";
-import { useToast } from "@chakra-ui/react"
-import { ChakraProvider } from "@chakra-ui/react";
-
+import { EarthCanvas } from "./canvas";
 
 const Contact = () => {
-
-  //le useref est utilisé pour enregistré ce que l'utilisateur a taper dans le formulaire
-  const formRef = useRef();
-  const toast = useToast()
+  const toast = useToast();
 
   //les messages d'eereurs du formulaire
-  const [messageError, setMessageError] = useState("")
+  const [messageError, setMessageError] = useState("");
+  const [loading, setLoading] = useState(false);
   //ici ce sont les données du formulaire qui vont etre envoyées avec emailjs
   const [form, setForm] = useState({
     name: "",
     email: "",
     message: "",
   });
-
-  const sendData = (formulaire) => {
-    try {
-      fetch("./api/email", {
-        method: "POST",
-        body: JSON.stringify(formulaire),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
-    } catch (error) {
-      console.log("erreur lors du fetch", error)
-    }
-  }
-  
-  const [loading, setLoading] = useState(false);
 
   //fonction qui va mettre à jour en temps réel les données du formulaire
   const handleChange = (e) => {
@@ -51,31 +31,57 @@ const Contact = () => {
       [name]: value,
     });
   };
+  const sendEmail = async (e) => {
+    e.preventDefault();
+    let emailTemplate = {
+      to_name: "Hicham",
+      from_name: form.name,
+      message: form.message,
+    };
+    try {
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+        emailTemplate,
+        {
+          publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_ID,
+        }
+      );
+      console.log("SUCCESS!");
+    } catch (err) {
+      if (err) {
+        console.log("EMAILJS FAILED...", err);
+        return;
+      }
+
+      console.log("ERROR", err);
+    }
+  };
 
   //la fonction qui va envoyé les données du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      await sendData(form)
-      setLoading(false)
+      await sendEmail();
+      setLoading(false);
       setForm({
-        name: '',
-        email: '',
-        message: ""
-      })
+        name: "",
+        email: "",
+        message: "",
+      });
       toast({
-        title: 'Message sent',
+        title: "Message sent",
         status: "success",
         position: "top",
-        duration: 2000
-      })
+        duration: 2000,
+      });
     } catch (error) {
-      setLoading(false)
-      console.log(error)
-      alert("something went wrong, please try again")
+      setLoading(false);
+      console.log(error);
+      alert("something went wrong, please try again");
     }
-  }
+  };
 
   return (
     <ChakraProvider>
@@ -84,62 +90,67 @@ const Contact = () => {
       >
         <motion.div
           variants={slideIn("left", "tween", 0.2, 1)}
-          className='flex-[0.75] bg-black-100 p-8 rounded-2xl'
+          className="flex-[0.75] bg-black-100 p-8 rounded-2xl"
         >
           <p className={styles.sectionSubText}>Get in touch</p>
           <h3 className={styles.sectionHeadText}>Contact.</h3>
 
           <form
             method="post"
-            ref={formRef}
             onSubmit={handleSubmit}
-            className='mt-12 flex flex-col gap-8'
+            className="mt-12 flex flex-col gap-8"
           >
-            <label className='flex flex-col'>
-              <span className='text-white font-medium mb-4'>Your Name</span>
+            <label className="flex flex-col">
+              <span className="text-white font-medium mb-4">Your Name</span>
               <input
                 required="required"
-                type='text'
-                name='name'
+                type="text"
+                name="name"
                 value={form.name}
                 onChange={handleChange}
                 placeholder="What's your good name?"
-                className='bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium'
+                className="bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium"
               />
             </label>
-            <small className="p-0 m-0 bg-red-600 text-center rounded-sm">{messageError}</small>
-            <label className='flex flex-col'>
-              <span className='text-white font-medium mb-4'>Your email</span>
+            <small className="p-0 m-0 bg-red-600 text-center rounded-sm">
+              {messageError}
+            </small>
+            <label className="flex flex-col">
+              <span className="text-white font-medium mb-4">Your email</span>
               <input
                 required="required"
-                type='email'
-                name='email'
+                type="email"
+                name="email"
                 value={form.email}
                 onChange={handleChange}
                 placeholder="What's your web address?"
-                className='bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium'
+                className="bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium"
               />
             </label>
-            <small className="p-0 m-0 bg-red-600 text-center rounded-sm">{messageError}</small>
-            <label className='flex flex-col'>
-              <span className='text-white font-medium mb-4'>Your Message</span>
+            <small className="p-0 m-0 bg-red-600 text-center rounded-sm">
+              {messageError}
+            </small>
+            <label className="flex flex-col">
+              <span className="text-white font-medium mb-4">Your Message</span>
               <textarea
                 required="required"
                 rows={7}
-                name='message'
+                name="message"
                 value={form.message}
                 onChange={handleChange}
-                placeholder='What you want to say?'
-                className='bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium'
+                placeholder="What you want to say?"
+                className="bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium"
               />
             </label>
-            <small className="p-0 m-0 bg-red-600 text-center rounded-sm">{messageError}</small>
+            <small className="p-0 m-0 bg-red-600 text-center rounded-sm">
+              {messageError}
+            </small>
 
             <button
-              disabled={!form.message || !form.message || !form.email}
-              type='submit'
-              className='bg-tertiary py-3 px-8 rounded-xl outline-none w-fit text-white font-bold shadow-md shadow-primary'
-            // onClick={notify}
+              disabled={!form.message || !form.name || !form.email}
+              type="submit"
+              className="bg-tertiary py-3 px-8 rounded-xl outline-none w-fit text-white font-bold shadow-md shadow-primary"
+              // onClick={notify}
             >
               {loading ? "Sending..." : "Send"}
             </button>
@@ -148,7 +159,7 @@ const Contact = () => {
 
         <motion.div
           variants={slideIn("right", "tween", 0.2, 1)}
-          className='xl:flex-1 xl:h-auto md:h-[550px] h-[350px]'
+          className="xl:flex-1 xl:h-auto md:h-[550px] h-[350px]"
         >
           <EarthCanvas />
         </motion.div>
