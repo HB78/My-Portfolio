@@ -31,8 +31,7 @@ const Contact = () => {
       [name]: value,
     });
   };
-  const sendEmail = async (e) => {
-    e.preventDefault();
+  const sendEmail = async () => {
     let emailTemplate = {
       to_name: "Hicham",
       from_name: form.name,
