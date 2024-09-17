@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { styles } from "../styles";
 import { ComputersCanvas } from "./canvas";
 
@@ -11,8 +11,11 @@ const Hero = () => {
       setTimeout(resolve, ms);
     });
   }
-  const phrases = ["Hicham", "a fullstack web developer"];
+  //Avant j'avais mis un array simple, le usememo permet de ne pas recréer le tableau à chaque fois que le hook change
+  const phrases = useMemo(() => ["Hicham", "a fullstack web developer"], []);
+
   const [element, setElement] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
 
   //le temps de sommeil entre chaque mots
   let sleepTime = 100;
@@ -20,38 +23,42 @@ const Hero = () => {
   let curPhraseIndex = 0;
 
   //la fonction doit etre asynchrone car elle attends l'arrivée des autres mots
-  const writeLoop = async () => {
-    while (true) {
-      //tant que c'est a true tu continue la logique...
+  const writeLoop = useCallback(async () => {
+    let curPhraseIndex = 0;
+
+    while (isTyping) {
+      // tant que c'est à true tu continues la logique...
       let curWord = phrases[curPhraseIndex];
 
       for (let i = 0; i < curWord.length; i++) {
-        setElement(curWord.substring(0, i + 10));
-        //correspond au tend d'attente au début de l'écriture de chaque mot
+        setElement(curWord.substring(0, i + 1));
+        // correspond au temps d'attente au début de l'écriture de chaque mot
         await sleep(sleepTime);
       }
-      //correspond au temps d'attente après l'écriture de chaque mot
+      // correspond au temps d'attente après l'écriture de chaque mot
       await sleep(sleepTime * 10);
 
-      //le reverse pour passer au mot suivant
+      // le reverse pour passer au mot suivant
       for (let i = curWord.length; i > 0; i--) {
-        setElement(curWord.substring(0, i - 10));
+        setElement(curWord.substring(0, i - 1));
         await sleep(sleepTime);
       }
       await sleep(sleepTime * 5);
 
-      //ici la condition permet de passer au mot suivant et de recommencer si on arrive à la fin du tableau
+      // ici la condition permet de passer au mot suivant et de recommencer si on arrive à la fin du tableau
       if (curPhraseIndex === phrases.length - 1) {
-        setElement("Hicham");
-        return;
+        curPhraseIndex = 0;
       } else {
         curPhraseIndex++;
       }
     }
-  };
+  }, [isTyping, phrases, sleepTime]);
+
   useEffect(() => {
     writeLoop();
-  }, []);
+    return () => setIsTyping(false);
+  }, [writeLoop]);
+
   return (
     <section className="relative w-full h-screen mx:auto">
       {/* //la div qui va contenir le bureau et tout le contenu qui va avec*/}
