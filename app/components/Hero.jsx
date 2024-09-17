@@ -65,7 +65,7 @@ const Hero = () => {
         curPhraseIndex++;
       }
     }
-  }, [isTyping, phrases, sleepTime]);
+  }, [isTyping]);
 
   useEffect(() => {
     writeLoop();
