@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { styles } from "../styles";
 // import { ComputersCanvas } from "./canvas";
 
@@ -25,15 +25,13 @@ const Hero = () => {
     });
   }
   //Avant j'avais mis un array simple, le usememo permet de ne pas recréer le tableau à chaque fois que le hook change
-  const phrases = useMemo(() => ["Hicham", "a fullstack web developer"], []);
+  const phrases = ["Hicham", "a fullstack web developer"];
 
   const [element, setElement] = useState("");
   const [isTyping, setIsTyping] = useState(true);
 
   //le temps de sommeil entre chaque mots
   let sleepTime = 100;
-
-  let curPhraseIndex = 0;
 
   //la fonction doit etre asynchrone car elle attends l'arrivée des autres mots
   const writeLoop = useCallback(async () => {
