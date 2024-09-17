@@ -56,7 +56,7 @@ const Hero = () => {
 
         <div>
           <h1 className={`${styles.heroHeadText} text-white xs:text-md`}>
-            Hi, I'am
+            Hi, I'm
             <span className="text-[#915eff] ml-2">{element}</span>
             <span className="animate-blink">|</span>
           </h1>
