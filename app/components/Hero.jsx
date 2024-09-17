@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { styles } from "../styles";
 // import { ComputersCanvas } from "./canvas";
 
@@ -103,15 +103,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <Suspense
-        fallback={
-          <div className="w-full h-[50vh] flex items-center justify-center">
-            Chargement du modèle 3D...
-          </div>
-        }
-      >
-        <ComputersCanvas />
-      </Suspense>
+      <ComputersCanvas />
 
       {/* //la petite animation arrondis qui mene a la section suivante */}
       <div className="absolute xs:bottom-10 bottom-32 w-full flex justify-center items-center">
