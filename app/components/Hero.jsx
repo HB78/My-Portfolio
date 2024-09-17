@@ -10,11 +10,11 @@ const ComputersCanvas = dynamic(
   () => import("./canvas").then((mod) => mod.ComputersCanvas),
   {
     ssr: false,
-    loading: () => (
-      <div className="w-full h-[50vh] flex items-center justify-center">
-        Chargement du modèle 3D...
-      </div>
-    ),
+    // loading: () => (
+    //   <div className="w-full h-[50vh] flex items-center justify-center">
+    //     Chargement du modèle 3D...
+    //   </div>
+    // ),
   }
 );
 
@@ -70,7 +70,7 @@ const Hero = () => {
   useEffect(() => {
     writeLoop();
     return () => setIsTyping(false);
-  }, [writeLoop]);
+  }, []);
 
   return (
     <section className="relative w-full h-screen mx:auto">

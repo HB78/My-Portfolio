@@ -1,7 +1,8 @@
 "use client";
 import { OrbitControls, Preload, SpotLight, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import CanvasLoader from "../Loader";
 
 const Computers = ({ isMobile }) => {
   const computer = useGLTF("./desktop_pc/scene.gltf");
@@ -72,7 +73,7 @@ const ComputersCanvas = () => {
       camera={{ position: [20, 3, 5], fov: 25 }}
       gl={{ preserveDrawingBuffer: true }}
     >
-      
+      <Suspense fallback={<CanvasLoader />}>
         {/* //pour bouger le pc à gauche et à droite */}
         <OrbitControls
           enableZoom={false}
@@ -81,7 +82,7 @@ const ComputersCanvas = () => {
           minPolarAngle={Math.PI / 2}
         />
         <Computers isMobile={isMobile} />
-     
+      </Suspense>
 
       <Preload all />
     </Canvas>
