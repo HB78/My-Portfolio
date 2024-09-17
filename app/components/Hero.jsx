@@ -1,9 +1,22 @@
 "use client";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { styles } from "../styles";
-import { ComputersCanvas } from "./canvas";
+// import { ComputersCanvas } from "./canvas";
+
+const ComputersCanvas = dynamic(
+  () => import("./canvas").then((mod) => mod.ComputersCanvas),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[50vh] flex items-center justify-center">
+        Chargement du modèle 3D...
+      </div>
+    ),
+  }
+);
 
 const Hero = () => {
   function sleep(ms) {
@@ -90,7 +103,15 @@ const Hero = () => {
         </div>
       </div>
 
-      <ComputersCanvas />
+      <Suspense
+        fallback={
+          <div className="w-full h-[50vh] flex items-center justify-center">
+            Chargement du modèle 3D...
+          </div>
+        }
+      >
+        <ComputersCanvas />
+      </Suspense>
 
       {/* //la petite animation arrondis qui mene a la section suivante */}
       <div className="absolute xs:bottom-10 bottom-32 w-full flex justify-center items-center">
