@@ -10,11 +10,6 @@ const ComputersCanvas = dynamic(
   () => import("./canvas").then((mod) => mod.ComputersCanvas),
   {
     ssr: false,
-    // loading: () => (
-    //   <div className="w-full h-[50vh] flex items-center justify-center">
-    //     Chargement du modèle 3D...
-    //   </div>
-    // ),
   }
 );
 

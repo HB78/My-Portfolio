@@ -1,19 +1,23 @@
-"use client"
-import React from "react";
+"use client";
 
-import { BallCanvas } from "./canvas";
-import { SectionWrapper } from "../hoc";
 import { technologies } from "../constants";
+import { SectionWrapper } from "../hoc";
+
+const BallCanvas = dynamic(
+  () => import("./canvas").then((mod) => mod.BallCanvas),
+  {
+    ssr: false,
+  }
+);
 
 const Tech = () => {
   return (
-    <div className='flex flex-row flex-wrap justify-center gap-10'>
-      {technologies.map((technology, index) => (  
-        <div className='w-28 h-28' key={index}>
+    <div className="flex flex-row flex-wrap justify-center gap-10">
+      {technologies.map((technology, index) => (
+        <div className="w-28 h-28" key={index}>
           <BallCanvas icon={technology.icon.src} />
         </div>
-
-))}
+      ))}
     </div>
   );
 };
